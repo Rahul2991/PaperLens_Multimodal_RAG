@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+llama-index
+llama-index-llms-ollama
+sqlalchemy
+pydantic
+passlib
+python-jose
+fastapi[all]
+bcrypt
+python-dotenv
