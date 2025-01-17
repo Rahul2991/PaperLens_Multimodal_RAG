@@ -8,6 +8,7 @@ const Chat = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [error, setError] = useState("");
+    
 
     useEffect(() => {
         const fetchUserName = async () => {
@@ -85,7 +86,7 @@ const Chat = () => {
         container: {
             fontFamily: "Arial, sans-serif",
             padding: "20px",
-            maxWidth: "600px",
+            maxWidth: "1800px",
             margin: "0 auto",
             border: "1px solid #ddd",
             borderRadius: "8px",
@@ -97,7 +98,7 @@ const Chat = () => {
             justifyContent: "space-between",
             alignItems: "center",
             padding: "10px 20px",
-            backgroundColor: "#007bff",
+            backgroundColor: "#000",
             color: "white",
             borderRadius: "8px",
             marginBottom: "20px",
@@ -123,7 +124,7 @@ const Chat = () => {
             display: "flex",
             flexDirection: "column",
             gap: "10px",
-            height: "300px",
+            height: "70vh",
             overflowY: "auto",
             padding: "10px",
             border: "1px solid #ddd",
@@ -183,6 +184,7 @@ const Chat = () => {
                         style={{
                             ...styles.message,
                             alignSelf: msg.role === "user" ? "flex-end" : "flex-start",
+                            textAlign: msg.role === "user" ? "right" : "left",
                             backgroundColor: msg.role === "user" ? "#d1e7ff" : "#f1f1f1",
                         }}
                     >

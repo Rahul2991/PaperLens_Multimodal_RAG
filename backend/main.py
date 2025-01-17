@@ -1,3 +1,4 @@
+from datetime import timedelta
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -57,16 +58,14 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",
         )
-    access_token = create_access_token(data={"sub": user.username})
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=timedelta(minutes=1800))
     return {"access_token": access_token, "token_type": "bearer", "message": "Login successful", "username": user.username}
 
 @app.get("/chat")
 def chat(user: User = Depends(verify_token), ):
-    print(f'user: {user}')
     return {"message": f"Welcome to the chat, {user.username}!"}
 
 @app.post("/chat_ai")
 def chat(request: ChatRequest, user: User = Depends(verify_token), bot: Conversational_Bot = Depends(initialize_bot)):
-    print(f'user: {user}')
     response = bot.generate(request.msg)
     return {"message": f"{response.message.content}!"}
