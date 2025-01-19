@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, Form
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from auth import create_access_token, verify_token
@@ -66,6 +66,9 @@ def chat(user: User = Depends(verify_token), ):
     return {"message": f"Welcome to the chat, {user.username}!"}
 
 @app.post("/chat_ai")
-def chat(request: ChatRequest, user: User = Depends(verify_token), bot: Conversational_Bot = Depends(initialize_bot)):
-    response = bot.generate(request.msg)
+async def chat(message: str = Form(...), image: UploadFile = None, user: User = Depends(verify_token), bot: Conversational_Bot = Depends(initialize_bot)):
+    image_content = None
+    if image:
+        image_content = await image.read()
+    response = bot.generate(message, image_content)
     return {"message": f"{response.message.content}!"}
