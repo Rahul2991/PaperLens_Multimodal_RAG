@@ -24,3 +24,18 @@ class Conversational_Bot:
         print(f'History: {self.messages}')
         
         return response
+    
+    def get_history(self):
+        return self.messages
+    
+    def set_history(self, history):
+        self.messages = history
+    
+if __name__ == '__main__':
+    bot = Conversational_Bot("You are an expert in the field of AI Research and current AI Trends.")
+    query = None
+    while query != 'EXIT':
+        query = input('You: ')
+        if query == 'EXIT': break
+        response = bot.generate(query)
+        print(f'Bot: {response.message.content}')

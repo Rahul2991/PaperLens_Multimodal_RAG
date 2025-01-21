@@ -9,6 +9,13 @@ const spin = keyframes`
     }
     `;
 
+const typingDots = keyframes`
+    0% { content: ""; }
+    33% { content: "."; }
+    66% { content: ".."; }
+    100% { content: "..."; }
+`;
+
 export const ChatContainer = styled.div`
     max-width: 1800px;
     margin: auto;
@@ -45,14 +52,14 @@ export const NavBar = styled.div`
     margin-bottom: 20px;
 `;
 
-export const LoaderContainer = styled.div`
+export const SpinLoaderContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%; // Full height of the container
     `;
 
-export const Loader = styled.div`
+export const SpinLoader = styled.div`
     border: 4px solid #f3f3f3; // Light gray
     border-top: 4px solid #3498db; // Blue
     border-radius: 50%;
@@ -106,12 +113,12 @@ export const SendButton = styled.button`
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: ${({ disabled }) => (disabled ? "#ccc" : "#007bff")};
     color: white;
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
     
     &:hover {
-        background-color: #0056b3;
+        background-color: ${({ disabled }) => (disabled ? "#ccc" : "#0056b3")};
     }
     `;
 
@@ -171,7 +178,7 @@ export const StatMessage = styled.p`
     color: ${({ type }) => (type === "success" ? "green" : "red")};
     `;
 
-export const Image = styled.image`
+export const Image = styled.img`
     max-width: 100%;
     height: auto;
     margin-top: 10px;
@@ -187,3 +194,59 @@ export const LogoutButton = styled.button`
     color: white;
     cursor: pointer;
     `;
+
+export const TypingLoaderContainer = styled.div`
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    height: 100%; // Full height of the container
+    `;
+
+export const TypingIndicator = styled.div`
+    font-size: 16px;
+    color: #555;
+    &::after {
+        content: "...";
+        display: inline-block;
+        animation: ${typingDots} 1s steps(3, end) infinite;
+    }
+`;
+
+export const SessionSelector = styled.select`
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    color: #333;
+
+    &:focus {
+        outline: none;
+        border-color: #007bff;
+        background-color: #fff;
+    }
+`;
+
+export const NewSessionButton = styled.button`
+    padding: 10px 20px;
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+`;

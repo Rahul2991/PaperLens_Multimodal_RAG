@@ -9,3 +9,5 @@ python-jose
 fastapi[all]
 bcrypt
 python-dotenv
+motor
+pymongo

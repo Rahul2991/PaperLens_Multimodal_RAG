@@ -25,3 +25,5 @@ export const registerUser = (userData) => API.post("/register", userData);
 export const loginUser = (userData) => API.post("/login", userData);
 export const fetchChat = () => API.get("/chat");
 export const fetchChatBotResponse = (formData) => API.post("/chat_ai", formData);
+export const fetchChatSessions = () => API.get("/sessions");
+export const createChatSession = () => API.post("/create_session");
