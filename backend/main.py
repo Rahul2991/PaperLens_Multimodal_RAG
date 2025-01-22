@@ -98,17 +98,18 @@ async def get_user_sessions(current_user: User = Depends(verify_token)):
         user_sessions_cache[username] = user
     return user_sessions_cache[username]
 
-def find_or_create_session(user, session_id=None):
-    if session_id:
-        session = next((s for s in user["chat_sessions"] if s["session_id"] == session_id), None)
-        if not session:
-            raise HTTPException(status_code=404, detail="Invalid session ID")
-        else:
-            bot.set_history(session['messages'])
+def find_session(user, session_id, set_history=True):
+    session = next((s for s in user["chat_sessions"] if s["session_id"] == session_id), None)
+    if not session:
+        raise HTTPException(status_code=404, detail="Invalid session ID")
     else:
-        # Create a new session
-        session = {"session_id": str(uuid4()), "messages": []}
-        user["chat_sessions"].append(session)
+        if set_history: bot.set_history(session['messages'])
+    return session
+
+def create_new_session(user):
+    session = {"session_id": str(uuid4()), "messages": []}
+    user["chat_sessions"].append(session)
+    bot.set_history([])
     return session
 
 @app.get("/sessions")
@@ -117,7 +118,7 @@ async def list_sessions(user: dict = Depends(get_user_sessions)):
 
 @app.post("/create_session")
 async def create_session(user: dict = Depends(get_user_sessions)):
-    new_session = find_or_create_session(user)
+    new_session = create_new_session(user)
     await users_collection.update_one(
         {"_id": user["_id"]},
         {"$push": {"chat_sessions": new_session}}
@@ -125,8 +126,9 @@ async def create_session(user: dict = Depends(get_user_sessions)):
     return {"session_id": new_session["session_id"]}
 
 @app.post("/chat_ai")
-async def chat(session_id: str = None, message: str = Form(...), image: UploadFile = None, user: dict = Depends(get_user_sessions)):
-    session = find_or_create_session(user, session_id)
+async def chat(session_id: str = Form(...), message: str = Form(...), image: UploadFile = None, user: dict = Depends(get_user_sessions)):
+    print('session_id', session_id)
+    session = find_session(user, session_id) if session_id else create_session(user)
     
     image_content = None
     if image:
@@ -143,3 +145,20 @@ async def chat(session_id: str = None, message: str = Form(...), image: UploadFi
     )
 
     return {"message": response.message.content, "session_id": session["session_id"]}
+
+@app.delete("/sessions/{session_id}")
+async def delete_session(session_id: str, user: dict = Depends(get_user_sessions)):
+    user_sessions = user.get("chat_sessions", [])
+    updated_sessions = [session for session in user_sessions if session["session_id"] != session_id]
+
+    # Update the user document in MongoDB
+    await users_collection.update_one(
+        {"_id": user["_id"]},
+        {"$set": {"chat_sessions": updated_sessions}}
+    )
+
+    # Update the cache
+    user["chat_sessions"] = updated_sessions
+    user_sessions_cache[user["username"]] = user
+
+    return {"message": "Session deleted successfully"}

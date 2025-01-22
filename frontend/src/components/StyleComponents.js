@@ -16,9 +16,22 @@ const typingDots = keyframes`
     100% { content: "..."; }
 `;
 
+export const PageContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+`;
+
+export const MainContainer = styled.div`
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+`;
+
 export const ChatContainer = styled.div`
-    max-width: 1800px;
-    margin: auto;
+    flex-grow: 1; 
+    margin: 0px;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -26,10 +39,12 @@ export const ChatContainer = styled.div`
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
 `;
 
 export const ChatWindow = styled.div`
-    height: 70vh;
+    height: 75vh;
     overflow-y: auto;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -45,25 +60,72 @@ export const NavBar = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
-    background-color: #000;
+    padding: 4px 20px;
+    background-color: #1f2937; /* Dark gray */
     color: white;
+    position: sticky;
+    top: 0;
+`;
+
+export const ProfileContainer = styled.div`
+    position: relative;
+    cursor: pointer;
+`;
+
+export const ProfileCircle = styled.div`
+    width: 40px;
+    height: 40px;
+    background-color: #374151; /* Slightly lighter gray */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+`;
+
+export const DropdownMenu = styled.div`
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: white;
+    color: black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    margin-bottom: 20px;
+    padding: 10px;
+    display: ${(props) => (props.isVisible ? "block" : "none")};
+    z-index: 10;
+
+    button {
+        background: none;
+        border: none;
+        color: black;
+        padding: 8px 12px;
+        text-align: left;
+        width: 100%;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #f3f4f6; /* Light gray hover effect */
+        }
+    }
 `;
 
 export const SpinLoaderContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%; // Full height of the container
+    height: 100vh;
+    width: 100%;
+    flex-direction: column;
     `;
 
 export const SpinLoader = styled.div`
     border: 4px solid #f3f3f3; // Light gray
     border-top: 4px solid #3498db; // Blue
     border-radius: 50%;
-    width: 40px; // Adjust size as needed
+    width: 40px;
     height: 40px;
     animation: ${spin} 1s linear infinite;
     `;
@@ -230,23 +292,132 @@ export const SessionSelector = styled.select`
 `;
 
 export const NewSessionButton = styled.button`
-    padding: 10px 20px;
-    margin: 10px 0;
-    font-size: 16px;
+    width: 100%;
+    padding: 10px;
+    background-color: #3b82f6; /* Blue */
+    color: #ffffff;
+    font-size: 14px;
     font-weight: bold;
-    color: #fff;
-    background-color: #007bff;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    margin-bottom: 20px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: #2563eb; /* Darker blue */
+    }
+`;
+
+export const EmptyChat = styled.div`
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    margin-top: 20px;
+    `;
+
+export const DeleteSessionBtn = styled.button`
+    background: none;
+    border: none;
+    color: #f87171; /* Light red */
+    font-size: 16px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #dc2626; /* Darker red */
+    }
+    `;
+
+export const SidebarContainer = styled.div`
+    width: 250px;
+    height: 100vh;
+    background-color: #1f2937; /* Dark gray */
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    transition: transform 0.3s ease-in-out;
+    transform: ${(props) => (props.isCollapsed ? "translateX(-100%)" : "translateX(0)")};
+
+    @media (max-width: 768px) {
+        width: 250px;
+    }
+`;
+
+export const SidebarToggleButton = styled.button`
+    display: none;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #1f2937;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+
+    @media (max-width: 768px) {
+        display: block;
+    }
+`;
+
+export const SidebarTitle = styled.h3`
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #60a5fa; /* Light blue */
+    text-align: center;
+    align-items: center;
+`;
+
+export const SessionsList = styled.div`
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    padding-right: 10px;
+
+    /* Scrollbar styles */
+    &::-webkit-scrollbar {
+        width: 8px;
     }
 
-    &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
+    &::-webkit-scrollbar-thumb {
+        background: #374151; /* Darker gray */
+        border-radius: 4px;
     }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #475569; /* Hover effect */
+    }
+`;
+
+export const SessionItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: ${({ isActive }) => (isActive ? "#374151" : "#4b5563")};
+    color: ${({ isActive }) => (isActive ? "#ffffff" : "#d1d5db")};
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #2563eb; /* Blue */
+        color: #ffffff;
+    }
+`;
+
+export const SessionName = styled.span`
+    flex: 1;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 `;

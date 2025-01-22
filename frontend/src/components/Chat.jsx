@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
-import { createChatSession, fetchChatBotResponse, fetchChatSessions } from "../api";
-import { ChatContainer, ChatWindow, FileInput, Header, MessageInput, InputContainer, Message, NavBar, SendButton, Greet, StatMessage, Image, LogoutButton, TypingIndicator, TypingLoaderContainer, SessionSelector, NewSessionButton } from "./StyleComponents";
+import { createChatSession, deleteSession, fetchChatBotResponse, fetchChatSessions } from "../api";
+import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SessionsList, SessionItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer } from "./StyleComponents";
 
 const Chat = () => {
     const [sessions, setSessions] = useState([]);
@@ -13,9 +14,20 @@ const Chat = () => {
     const [statMessage, setStatMessage] = useState({ text: "", type: "" });
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [chatLoading, setChatLoading] = useState(false);
+    const chatEndRef = useRef(null);
+    const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+    const chatWindowRef = useRef(null);
 
     useEffect(() => {
-        const fetchInitialData  = async () => {
+        if (chatEndRef.current && chatWindowRef.current) {
+            chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+        }
+    }, [messages]);
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
             const user = localStorage.getItem("username");
             setUsername(user || "User");
             try {
@@ -28,8 +40,14 @@ const Chat = () => {
                 handleError(error);
             }
         };
-        fetchInitialData ();
+        fetchInitialData();
     }, []);
+
+    const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
+
+    const closeDropdown = () => setDropdownVisible(false);
+
+    const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -39,12 +57,14 @@ const Chat = () => {
 
     const handleError = (error) => {
         if (error.response?.status === 401) {
-            setStatMessage({text: "Session expired. Redirecting to login...", type: "error" });
+            setStatMessage({ text: "Session expired. Redirecting to login...", type: "error" });
             setTimeout(() => handleLogout(), 2000);
         } else {
-            setStatMessage({text: "An error occurred while connecting to the chat.", type: "error" });
+            setStatMessage({ text: "An error occurred while connecting to the chat.", type: "error" });
             console.error("Chat error:", error);
+            setTimeout(() => setStatMessage({ text: "", type: "" }), 2000);
         }
+
     };
 
     const handleSend = async () => {
@@ -89,7 +109,7 @@ const Chat = () => {
     const handleNewSession = async () => {
         try {
             const { data } = await createChatSession();
-            setSessions((prev) => [...prev, { session_id: data.session_id, messages_count: 0 }]);
+            setSessions((prev) => [...prev, { session_id: data.session_id, messages_count: 0, messages: [] }]);
             setActiveSessionId(data.session_id);
             setMessages([]); // Clear chat for the new session
         } catch (error) {
@@ -97,91 +117,119 @@ const Chat = () => {
         }
     };
 
-    const handleSessionChange = (sessionId) => {
+    const handleSessionChange = async (sessionId) => {
+        setChatLoading(true);
         setActiveSessionId(sessionId);
+        const { data } = await fetchChatSessions();
+        setSessions(data.sessions);
         const selectedSession = sessions.find((s) => s.session_id === sessionId);
-        console.log(selectedSession);
+        console.log("selectedSession:", selectedSession);
 
-        const transformedMessages = selectedSession?.messages
+        const transformedMessages = (selectedSession?.messages || [])
             .filter((msg) => msg.role !== "system") // Remove 'system' messages
             .map((msg) => ({
                 role: msg.role === "assistant" ? "bot" : msg.role, // Map roles
                 text: msg.content, // Map 'content' to 'text'
                 image: msg.image || null,
-        }));
+            }));
 
         setMessages(transformedMessages || []);
+        setChatLoading(false);
     };
 
-    // const loadSession = async (sessionId) => {
-    //     try {
-    //         const response = await fetch(`/api/sessions/${sessionId}`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${localStorage.getItem("token")}`,
-    //             },
-    //         });
-    //         const data = await response.json();
-    //         setMessages(data.session.messages);
-    //         setActiveSessionId(sessionId);
-    //     } catch (error) {
-    //         console.error("Error loading session:", error);
-    //     }
-    // };
+    const handleDeleteSession = async (sessionId) => {
+        try {
+            const response = await deleteSession(sessionId)
+            if (response.status === 200) {
+                setSessions((prev) => prev.filter((session) => session.session_id !== sessionId));
+                setMessages([]); // Clear messages if the deleted session was active
+                setActiveSessionId(null); // Clear the selected session
+                setStatMessage({ text: "Session deleted successfully!", type: "success" })
+            }
+        } catch (error) {
+            handleError(error)
+        }
+    };
 
     return (
-        <ChatContainer>
-
+        <PageContainer >
             <NavBar>
-                <Greet>Welcome, {username}!</Greet>
-                <LogoutButton onClick={handleLogout}> Logout </LogoutButton>
+                <h3>Multimodal Chat Interface</h3>
+                <ProfileContainer onClick={toggleDropdown} onBlur={closeDropdown} tabIndex={0}>
+                    <ProfileCircle>{username.charAt(0).toUpperCase()}</ProfileCircle>
+                    <DropdownMenu isVisible={dropdownVisible}>
+                        <button onClick={handleLogout}>Logout</button>
+                    </DropdownMenu>
+                </ProfileContainer>
             </NavBar>
-
-            <Header>Multimodal Chat Interface</Header>
-
-            <SessionSelector
-                value={activeSessionId || ""}
-                onChange={(e) => handleSessionChange(e.target.value)}
-            >
-                <option value="" disabled>
-                    Select a session
-                </option>
-                {sessions.map((session) => (
-                    <option key={session.session_id} value={session.session_id}>
-                        Session {session.session_id} ({session.messages_count} messages)
-                    </option>
-                ))}
-            </SessionSelector>
-
-            <NewSessionButton onClick={handleNewSession}>Start New Session</NewSessionButton>
-
-            <ChatWindow>
-                {messages.map((msg, index) => (
-                    <Message key={index} role={msg.role}>
-                        {msg.image && <Image src={msg.image} alt="Attachment"/>}
-                        {msg.text}
-                    </Message>
-                ))}
-                {loading && (
-                    <TypingLoaderContainer>
-                        <TypingIndicator> Bot is typing </TypingIndicator>
-                    </TypingLoaderContainer>
-                )}
-            </ChatWindow>
-
-            <InputContainer>
-                <FileInput type="file" accept="image/*" onChange={handleImageChange} disabled={loading} />
-                <MessageInput
-                    type="text"
-                    placeholder="Type a message..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    disabled={loading}
-                />
-                <SendButton onClick={handleSend} disabled={loading}> Send </SendButton>
-            </InputContainer>
-
-            {statMessage.text && <StatMessage type={statMessage.type}>{statMessage.text}</StatMessage>}
-        </ChatContainer>
+            <MainContainer>
+                <SidebarToggleButton onClick={toggleSidebar}>
+                    {isSidebarCollapsed ? ">" : "<"}
+                </SidebarToggleButton>
+                <SidebarContainer isCollapsed={isSidebarCollapsed}>
+                    <NewSessionButton onClick={handleNewSession}>Start New Session</NewSessionButton>
+                    <SessionsList>
+                        {sessions.length === 0 ? (
+                            <p>No sessions available.</p>
+                        ) : (sessions.map((session) => (
+                            <SessionItem
+                                key={session.session_id}
+                                isActive={session.session_id === activeSessionId}
+                                onClick={() => handleSessionChange(session.session_id)}
+                            >
+                                <SessionName>{session.session_id}</SessionName>
+                                <DeleteSessionBtn
+                                    onClick={(e) => {
+                                        e.stopPropagation(); // Prevent triggering session selection
+                                        const confirmDelete = window.confirm(
+                                            "Are you sure you want to delete this session?"
+                                        );
+                                        if (confirmDelete) handleDeleteSession(session.session_id);
+                                    }}
+                                >
+                                    🗑️
+                                </DeleteSessionBtn>
+                            </SessionItem>)))
+                        }
+                    </SessionsList>
+                </SidebarContainer>
+                <ChatContainer>
+                    <ChatWindow ref={chatWindowRef}>
+                        {chatLoading ? (
+                            <SpinLoaderContainer>
+                                <SpinLoader />
+                                <br />
+                                Loading messages...
+                            </SpinLoaderContainer>
+                        ) : messages.length > 0 ? (messages.map((msg, index) => (
+                            <Message key={index} role={msg.role}>
+                                {msg.image && <Image src={msg.image} alt="Attachment" />}
+                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                            </Message>
+                        ))) : <EmptyChat>No messages in this session yet. Start the conversation!</EmptyChat>
+                        }
+                        {loading && (
+                            <TypingLoaderContainer>
+                                <TypingIndicator> Bot is typing </TypingIndicator>
+                            </TypingLoaderContainer>
+                        )}
+                        <div ref={chatEndRef} />
+                    </ChatWindow>
+                    <InputContainer>
+                        <FileInput type="file" accept="image/*" onChange={handleImageChange} disabled={loading} />
+                        <MessageInput
+                            type="text"
+                            placeholder="Type a message..."
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            disabled={loading}
+                        />
+                        <SendButton onClick={handleSend} disabled={loading}> Send </SendButton>
+                    </InputContainer>
+                    {statMessage.text && <StatMessage type={statMessage.type}>{statMessage.text}</StatMessage>}
+                </ChatContainer>
+            </MainContainer>
+        </PageContainer >
     );
 };
 

@@ -29,7 +29,9 @@ class Conversational_Bot:
         return self.messages
     
     def set_history(self, history):
+        print('Setting history')
         self.messages = history
+        print(f'Set History: {self.messages}')
     
 if __name__ == '__main__':
     bot = Conversational_Bot("You are an expert in the field of AI Research and current AI Trends.")

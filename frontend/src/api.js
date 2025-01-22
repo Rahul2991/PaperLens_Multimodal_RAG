@@ -27,3 +27,4 @@ export const fetchChat = () => API.get("/chat");
 export const fetchChatBotResponse = (formData) => API.post("/chat_ai", formData);
 export const fetchChatSessions = () => API.get("/sessions");
 export const createChatSession = () => API.post("/create_session");
+export const deleteSession = async (sessionId) => API.delete(`/sessions/${sessionId}`)
