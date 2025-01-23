@@ -33,9 +33,6 @@ const Chat = () => {
             try {
                 const { data } = await fetchChatSessions();
                 setSessions(data.sessions);
-                if (data.sessions.length > 0) {
-                    setActiveSessionId(data.sessions[0].session_id); // Default to the first session
-                }
             } catch (error) {
                 handleError(error);
             }
@@ -50,6 +47,7 @@ const Chat = () => {
     const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
     const handleLogout = () => {
+        console.log('logout');
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         navigate("/login");
@@ -68,10 +66,15 @@ const Chat = () => {
     };
 
     const handleSend = async () => {
+        let session_id = activeSessionId;
         if (!input.trim() && !image) return;
         if (!activeSessionId) {
-            setStatMessage({ text: "Please select or create a session first.", type: "error" });
-            return;
+            // setStatMessage({ text: "Please select or create a session first.", type: "error" });
+            // return;
+            const { data } = await createChatSession();
+            setSessions((prev) => [...prev, { session_id: data.session_id, messages_count: 0, messages: [] }]);
+            setActiveSessionId(data.session_id);
+            session_id = data.session_id;
         }
         const userMessage = { role: "user", text: input, image: image ? URL.createObjectURL(image) : null, };
         setMessages((prev) => [...prev, userMessage]);
@@ -83,7 +86,7 @@ const Chat = () => {
         try {
             const formData = new FormData();
             formData.append("message", input);
-            formData.append("session_id", activeSessionId);
+            formData.append("session_id", session_id);
             if (image) formData.append("image", image);
 
             const response = await fetchChatBotResponse(formData);
@@ -109,9 +112,11 @@ const Chat = () => {
     const handleNewSession = async () => {
         try {
             const { data } = await createChatSession();
+            console.log("data", data.session_id);
             setSessions((prev) => [...prev, { session_id: data.session_id, messages_count: 0, messages: [] }]);
             setActiveSessionId(data.session_id);
             setMessages([]); // Clear chat for the new session
+            console.log("session_id", activeSessionId);
         } catch (error) {
             handleError(error);
         }
@@ -120,11 +125,21 @@ const Chat = () => {
     const handleSessionChange = async (sessionId) => {
         setChatLoading(true);
         setActiveSessionId(sessionId);
-        const { data } = await fetchChatSessions();
-        setSessions(data.sessions);
+        try {
+            const { data } = await fetchChatSessions();
+            setSessions(data.sessions);
+        } catch (error) {
+            handleError(error);
+        }
         const selectedSession = sessions.find((s) => s.session_id === sessionId);
         console.log("selectedSession:", selectedSession);
 
+        postProcessMessages(selectedSession);
+
+        setChatLoading(false);
+    };
+
+    const postProcessMessages = (selectedSession) => {
         const transformedMessages = (selectedSession?.messages || [])
             .filter((msg) => msg.role !== "system") // Remove 'system' messages
             .map((msg) => ({
@@ -132,10 +147,8 @@ const Chat = () => {
                 text: msg.content, // Map 'content' to 'text'
                 image: msg.image || null,
             }));
-
         setMessages(transformedMessages || []);
-        setChatLoading(false);
-    };
+    }
 
     const handleDeleteSession = async (sessionId) => {
         try {

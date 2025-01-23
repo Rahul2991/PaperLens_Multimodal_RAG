@@ -54,6 +54,20 @@ export const ChatWindow = styled.div`
     gap: 10px;
     display: flex;
     flex-direction: column;
+
+    /* Scrollbar styles */
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #374151; /* Darker gray */
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #475569; /* Hover effect */
+    }
     `;
 
 export const NavBar = styled.div`
@@ -85,7 +99,9 @@ export const ProfileCircle = styled.div`
     font-weight: bold;
 `;
 
-export const DropdownMenu = styled.div`
+export const DropdownMenu = styled.div.attrs((props) => ({
+    isVisible: undefined,
+}))`
     position: absolute;
     top: 50px;
     right: 0;
@@ -329,9 +345,11 @@ export const DeleteSessionBtn = styled.button`
     }
     `;
 
-export const SidebarContainer = styled.div`
+export const SidebarContainer = styled.div.attrs((props) => ({
+    isCollapsed: undefined,
+}))`
     width: 250px;
-    height: 100vh;
+    height: 90vh;
     background-color: #1f2937; /* Dark gray */
     color: #ffffff;
     display: flex;
@@ -396,7 +414,9 @@ export const SessionsList = styled.div`
     }
 `;
 
-export const SessionItem = styled.div`
+export const SessionItem = styled.div.attrs((props) => ({
+    isActive: undefined, 
+}))`
     display: flex;
     justify-content: space-between;
     align-items: center;

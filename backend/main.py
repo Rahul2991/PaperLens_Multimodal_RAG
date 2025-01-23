@@ -128,7 +128,7 @@ async def create_session(user: dict = Depends(get_user_sessions)):
 @app.post("/chat_ai")
 async def chat(session_id: str = Form(...), message: str = Form(...), image: UploadFile = None, user: dict = Depends(get_user_sessions)):
     print('session_id', session_id)
-    session = find_session(user, session_id) if session_id else create_session(user)
+    session = create_new_session(user) if (session_id == 'null' or session_id == None) else find_session(user, session_id)
     
     image_content = None
     if image:
