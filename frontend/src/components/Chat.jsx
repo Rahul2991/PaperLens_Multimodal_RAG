@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
+import { FaPaperclip } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { createChatSession, deleteSession, fetchChatBotResponse, fetchChatSessions } from "../api";
-import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SessionsList, SessionItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer } from "./StyleComponents";
+import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SessionsList, SessionItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper } from "./StyleComponents";
 
 const Chat = () => {
     const [sessions, setSessions] = useState([]);
@@ -105,8 +106,16 @@ const Chat = () => {
         }
     };
 
-    const handleImageChange = (event) => {
-        setImage(event.target.files[0]);
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("Uploaded file:", file.name);  // File name
+            console.log("File type:", file.type);     // MIME type (e.g., image/png, application/pdf)
+            console.log("File size:", file.size);     // File size in bytes
+        } else {
+            console.log("No file selected.");
+        }
+        // setImage(event.target.files[0]);
     };
 
     const handleNewSession = async () => {
@@ -229,7 +238,18 @@ const Chat = () => {
                         <div ref={chatEndRef} />
                     </ChatWindow>
                     <InputContainer>
-                        <FileInput type="file" accept="image/*" onChange={handleImageChange} disabled={loading} />
+                        <>
+                            <FileInput
+                                type="file"
+                                accept=".png,.jpg,.jpeg,.pdf,.docx,.txt" // Supported file types
+                                onChange={handleFileUpload}
+                                id="file-upload"
+                                disabled={loading}
+                            />
+                            <AttachmentButtonWrapper htmlFor="file-upload" disabled={loading}>
+                                <FaPaperclip size={18} />
+                            </AttachmentButtonWrapper>
+                        </>
                         <MessageInput
                             type="text"
                             placeholder="Type a message..."

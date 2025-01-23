@@ -183,7 +183,7 @@ export const InputField = styled.input`
     `;
 
 export const FileInput = styled.input`
-    margin-left: 10px;
+    display: none;
     `;
 
 export const SendButton = styled.button`
@@ -440,4 +440,34 @@ export const SessionName = styled.span`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+`;
+
+export const AttachmentButtonWrapper = styled.label`
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #007bff; /* Adjust to your theme color */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s ease;
+
+    &:hover {
+        transform: scale(1.1);
+        background-color: #0056b3; /* Darker shade for hover */
+    }
+
+    &:active {
+        transform: scale(1.05);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    &:disabled {
+        background-color: #cbd5e1; /* Disabled state */
+        cursor: not-allowed;
+        transform: none;
+    }
 `;
