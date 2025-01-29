@@ -11,3 +11,16 @@ bcrypt
 python-dotenv
 motor
 pymongo
+unstructured==0.16.6
+pdfminer.six==20231228
+pillow==10.4.0
+pi_heif==0.21.0
+unstructured_inference==0.7.40
+poppler-utils==0.1.0
+pdf2image==1.17.0
+unstructured_pytesseract==0.3.12
+onnx==1.16.1
+python-magic-bin==0.4.14
+einops==0.8.0
+llama-index-embeddings-huggingface
+qdrant_client
