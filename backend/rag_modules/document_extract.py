@@ -1,9 +1,8 @@
 from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.text import partition_text
-from unstructured.partition.image import partition_image
-import unstructured, os
-from bot import Conversational_Bot
+from rag_modules.conversational_bot import Conversational_Bot
 from tqdm import tqdm
+import unstructured, os
 
 def data_extracter(data, file_type, bot: Conversational_Bot = None):
     try:
@@ -15,7 +14,7 @@ def data_extracter(data, file_type, bot: Conversational_Bot = None):
                 if isinstance(chunk, unstructured.documents.elements.Table):
                     tables.append(chunk)
                 if isinstance(chunk, unstructured.documents.elements.CompositeElement):
-                    texts.append(chunk)
+                    texts.append(str(chunk))
                     chunk_elements = chunk.metadata.orig_elements
                     for element in chunk_elements:
                         if isinstance(element, unstructured.documents.elements.Image):

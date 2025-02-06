@@ -32,6 +32,28 @@ class Conversational_Bot:
         print('Setting history')
         self.messages = history
         print(f'Set History: {self.messages}')
+        
+    def summarize_image(self, image):
+        response = ollama.chat(
+        model='llama3.2-vision',
+        messages=[{
+            'role': 'user',
+            'content': 'Summarize the image:',
+            'images': [image]
+            }]
+        )
+        return response.message.content
+    
+    def summarize_table(self, table_html):
+        response = ollama.chat(
+        model='llama3.2:1b',
+        messages=[{
+            'role': 'user',
+            'content': f'Summarize this table: {table_html}'
+            }]
+        )
+        
+        return response.message.content
     
 if __name__ == '__main__':
     bot = Conversational_Bot("You are an expert in the field of AI Research and current AI Trends.")

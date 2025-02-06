@@ -3,7 +3,7 @@ import { FaPaperclip } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { createChatSession, deleteSession, fetchChatBotResponse, fetchChatSessions } from "../api";
-import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SessionsList, SessionItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper } from "./StyleComponents";
+import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SidebarList, SidebarItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper } from "./StyleComponents";
 
 const Chat = () => {
     const [sessions, setSessions] = useState([]);
@@ -40,6 +40,10 @@ const Chat = () => {
         };
         fetchInitialData();
     }, []);
+
+    useEffect(() => {
+        console.log(dropdownVisible);
+    }, [dropdownVisible]);
 
     const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
 
@@ -190,11 +194,11 @@ const Chat = () => {
                 </SidebarToggleButton>
                 <SidebarContainer isCollapsed={isSidebarCollapsed}>
                     <NewSessionButton onClick={handleNewSession}>Start New Session</NewSessionButton>
-                    <SessionsList>
+                    <SidebarList>
                         {sessions.length === 0 ? (
                             <p>No sessions available.</p>
                         ) : (sessions.map((session) => (
-                            <SessionItem
+                            <SidebarItem
                                 key={session.session_id}
                                 isActive={session.session_id === activeSessionId}
                                 onClick={() => handleSessionChange(session.session_id)}
@@ -211,9 +215,9 @@ const Chat = () => {
                                 >
                                     🗑️
                                 </DeleteSessionBtn>
-                            </SessionItem>)))
+                            </SidebarItem>)))
                         }
-                    </SessionsList>
+                    </SidebarList>
                 </SidebarContainer>
                 <ChatContainer>
                     <ChatWindow ref={chatWindowRef}>
@@ -241,7 +245,7 @@ const Chat = () => {
                         <>
                             <FileInput
                                 type="file"
-                                accept=".png,.jpg,.jpeg,.pdf,.docx,.txt" // Supported file types
+                                accept=".png,.jpg,.jpeg,.pdf,.txt" // Supported file types
                                 onChange={handleFileUpload}
                                 id="file-upload"
                                 disabled={loading}

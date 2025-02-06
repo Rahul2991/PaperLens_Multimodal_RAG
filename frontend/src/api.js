@@ -21,10 +21,30 @@ API.interceptors.response.use(
     }
 );
 
-export const registerUser = (userData) => API.post("/register", userData);
-export const loginUser = (userData) => API.post("/login", userData);
+export const registerUser = (userData) => API.post("/auth/register", userData);
+export const loginUser = (userData) => API.post("/auth/login", userData);
 export const fetchChat = () => API.get("/chat");
-export const fetchChatBotResponse = (formData) => API.post("/chat_ai", formData);
-export const fetchChatSessions = () => API.get("/sessions");
-export const createChatSession = () => API.post("/create_session");
-export const deleteSession = async (sessionId) => API.delete(`/sessions/${sessionId}`)
+export const fetchChatBotResponse = (formData) => API.post("/chat/chat_ai", formData);
+export const fetchChatSessions = () => API.get("/chat/sessions");
+export const createChatSession = () => API.post("/chat/create_session");
+export const deleteSession = async (sessionId) => API.delete(`/chat/sessions/${sessionId}`)
+export const listUsers = () => API.get("/admin/users");
+
+
+export const uploadRagFilesAdmin = (files, tags) => {
+    const formData = new FormData();
+
+    // Append all files to FormData
+    files.forEach((file) => {
+        formData.append("files", file);
+    });
+
+    // Optionally, append tags to FormData if needed
+    formData.append("tags", tags);
+
+    return API.post("/admin/upload", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+};

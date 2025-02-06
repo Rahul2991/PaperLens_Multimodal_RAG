@@ -1,37 +1,17 @@
-from jose import JWTError, jwt
-from datetime import datetime, timedelta, timezone
-from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from models import User, get_db
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-SECRET_KEY = os.getenv('SECRET_KEY')
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+from models.sql_db import get_db
+from jose import JWTError, jwt
+from models.user import User
+from config import Config
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-def create_access_token(data: dict, expires_delta: timedelta = None):
-    to_encode = data.copy()
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-def verify_token(
-    token: str = Depends(oauth2_scheme), 
-    db: Session = Depends(get_db)
-    ) -> User:
+def verify_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
     try:
         # Decode the token
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, Config.SECRET_KEY, algorithms=[Config.ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(
@@ -41,6 +21,7 @@ def verify_token(
             )
         # Fetch user from database
         user = db.query(User).filter(User.username == username).first()
+        
         if user is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -54,3 +35,11 @@ def verify_token(
             detail=f"Invalid token: {str(e)}",
             headers={"WWW-Authenticate": "Bearer"},
         )
+        
+def admin_only(current_user: User = Depends(verify_token)):
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access denied: Admins only",
+        )
+    return current_user

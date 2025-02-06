@@ -13,7 +13,7 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             const response = await loginUser({ username, password });
-            console.log(response.data.access_token);
+            console.log(response);
             localStorage.setItem("token", response.data.access_token);
             localStorage.setItem("username", response.data.username);
             setStatMessage({text: response.data.message, type: "success" });

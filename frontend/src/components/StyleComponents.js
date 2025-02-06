@@ -99,9 +99,9 @@ export const ProfileCircle = styled.div`
     font-weight: bold;
 `;
 
-export const DropdownMenu = styled.div.attrs((props) => ({
-    isVisible: undefined,
-}))`
+export const DropdownMenu = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== "isVisible",
+})`
     position: absolute;
     top: 50px;
     right: 0;
@@ -110,7 +110,7 @@ export const DropdownMenu = styled.div.attrs((props) => ({
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 10px;
-    display: ${(props) => (props.isVisible ? "block" : "none")};
+    display: ${({isVisible}) => (isVisible ? "block" : "none")};
     z-index: 10;
 
     button {
@@ -345,9 +345,9 @@ export const DeleteSessionBtn = styled.button`
     }
     `;
 
-export const SidebarContainer = styled.div.attrs((props) => ({
-    isCollapsed: undefined,
-}))`
+export const SidebarContainer = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== "isCollapsed",
+})`
     width: 250px;
     height: 90vh;
     background-color: #1f2937; /* Dark gray */
@@ -360,7 +360,7 @@ export const SidebarContainer = styled.div.attrs((props) => ({
     position: sticky;
     top: 0;
     transition: transform 0.3s ease-in-out;
-    transform: ${(props) => (props.isCollapsed ? "translateX(-100%)" : "translateX(0)")};
+    transform: ${({isCollapsed}) => (isCollapsed ? "translateX(-100%)" : "translateX(0)")};
 
     @media (max-width: 768px) {
         width: 250px;
@@ -393,7 +393,7 @@ export const SidebarTitle = styled.h3`
     align-items: center;
 `;
 
-export const SessionsList = styled.div`
+export const SidebarList = styled.div`
     flex: 1;
     width: 100%;
     overflow-y: auto;
@@ -414,9 +414,9 @@ export const SessionsList = styled.div`
     }
 `;
 
-export const SessionItem = styled.div.attrs((props) => ({
-    isActive: undefined, 
-}))`
+export const SidebarItem = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== "isActive",
+})`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -470,4 +470,30 @@ export const AttachmentButtonWrapper = styled.label`
         cursor: not-allowed;
         transform: none;
     }
+`;
+
+export const AdminContainer = styled.div`
+    display: flex;
+    height: 100vh;
+`;
+
+
+export const AdminSidebarItem = styled.div.withConfig({
+    shouldForwardProp: (prop) => prop !== "active",
+})`
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    color: ${({ active }) => (active ? "#2563eb" : "white")};
+
+    &:hover {
+        background-color: #374151;
+        border-radius: 8px;
+    }
+`;
+
+export const SidebarIcon = styled.div`
+    margin-right: 10px;
 `;
