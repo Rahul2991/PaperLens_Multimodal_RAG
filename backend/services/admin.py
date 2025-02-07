@@ -12,6 +12,7 @@ from schemas.user import UserRegister
 from auth.security import hash_password
 from pathlib import Path
 from config import Config
+from motor.motor_asyncio import AsyncIOMotorCollection
 import os
 
 UPLOAD_FOLDER = Path(Config.ADMIN_UPLOAD_FILE_LOCATION)
@@ -46,7 +47,7 @@ def create_admin(user: UserRegister, db: Session) -> User:
     db.commit()
     return new_user
 
-async def upload_files(files: List[UploadFile], tags, files_collection, current_user: User, embed_data: EmbedData, vector_db: QdrantVDB):
+async def upload_files(files: List[UploadFile], tags: str, files_collection: AsyncIOMotorCollection, current_user: User, embed_data: EmbedData, vector_db: QdrantVDB):
     try:
         for file in files:
             try:
@@ -115,3 +116,18 @@ async def upload_files(files: List[UploadFile], tags, files_collection, current_
             detail=f"File upload failed: {str(e)}"
         )
 
+async def list_all_files(db: Session, current_user: User, files_collection: AsyncIOMotorCollection):
+    try:
+        files_list = await files_collection.find().to_list()
+        return [{"id": str(file['_id']),
+                "filename": file['filename'],
+                "uploader": file['uploader'],
+                "role": file['uploader_role'],
+                "upload_time": file['upload_time'].strftime("%Y-%m-%d %H:%M:%S"),
+                "collection_name": file['collection_name'],
+                "tags": file['tags']} for file in files_list]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch files info : {str(e)}"
+        )

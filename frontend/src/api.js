@@ -29,7 +29,7 @@ export const fetchChatSessions = () => API.get("/chat/sessions");
 export const createChatSession = () => API.post("/chat/create_session");
 export const deleteSession = async (sessionId) => API.delete(`/chat/sessions/${sessionId}`)
 export const listUsers = () => API.get("/admin/users");
-
+export const listFiles = () => API.get("/admin/list_files");
 
 export const uploadRagFilesAdmin = (files, tags) => {
     const formData = new FormData();
