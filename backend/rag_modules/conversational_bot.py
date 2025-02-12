@@ -15,6 +15,7 @@ class Conversational_Bot:
         else:
             self.messages.append({"role": "user", "content":user_question})
         
+        print('message before: ',self.messages)
         # generate response from LLM
         response = ollama.chat(model='llama3.2-vision', messages=self.messages)
         

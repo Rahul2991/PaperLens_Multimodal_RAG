@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, File, UploadFile
+from fastapi import Depends, APIRouter, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from services.rag_service import get_embed_data_obj, get_vector_db
 from models.mongo_db import get_files_collection
@@ -28,7 +28,7 @@ def register(user: UserRegister, db: Session = Depends(get_db), current_user: Us
 @router.post("/upload")
 async def upload_file(
     files: List[UploadFile] = File(...), 
-    tags: str = "",
+    tags: str = Form(...),
     current_user: User = Depends(admin_only), 
     files_collection = Depends(get_files_collection),
     embed_data = Depends(get_embed_data_obj),
@@ -39,5 +39,5 @@ async def upload_file(
     return {"message": f"All Files uploaded successfully"}
 
 @router.get("/list_files")
-async def list_files(db: Session = Depends(get_db), current_user: User = Depends(admin_only), files_collection = Depends(get_files_collection),):
-    return await list_all_files(db, current_user, files_collection)
+async def list_files(current_user: User = Depends(admin_only), files_collection = Depends(get_files_collection),):
+    return await list_all_files(files_collection)

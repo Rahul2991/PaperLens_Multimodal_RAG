@@ -8,9 +8,10 @@ def get_vector_db():
 def get_embed_data_obj():
     return EmbedData()
 
-def initialize_bot():
-    system_message = "You are an expert in the field of AI Research and current AI Trends."
-    bot_instance = Conversational_Bot(system_message)
-    return bot_instance
+# def initialize_bot():
+#     system_message = "You are an expert in the field of AI Research and current AI Trends."
+#     bot_instance = Conversational_Bot(system_message)
+#     return bot_instance
 
-bot = initialize_bot()
+# bot = initialize_bot()
+bot = Conversational_Bot()

@@ -58,4 +58,4 @@ class RAG:
         prompt = self.qa_prompt_tmpl_str.format(context=context, query=query)
         response = self.llm.generate(prompt)
         
-        return dict(response)['text']
+        return response

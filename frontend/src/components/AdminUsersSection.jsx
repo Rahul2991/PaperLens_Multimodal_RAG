@@ -2,21 +2,37 @@ import React, { useEffect, useRef, useState } from "react";
 import { listUsers } from "../api";
 import styled from "styled-components";
 
+const Container  = styled.div`
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
+const Title = styled.h2`
+    text-align: center;
+    color: #333;
+`;
+
 const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin-top: 20px;
 `;
 
 const Th = styled.th`
-    background-color: #2563eb;
+    background: #2563eb;
     color: white;
     padding: 10px;
+    text-align: left;
 `;
 
 const Td = styled.td`
     padding: 10px;
     border: 1px solid #ddd;
+    text-align: left;
 `;
 
 const AdminUsersSection = () => {
@@ -38,8 +54,8 @@ const AdminUsersSection = () => {
     }, []);
 
     return (
-        <div>
-            <h2>Users</h2>
+        <Container>
+            <Title>Users</Title>
             <Table>
                 <thead>
                     <tr>
@@ -66,7 +82,7 @@ const AdminUsersSection = () => {
                     ))}
                 </tbody>
             </Table>
-        </div>
+        </Container>
     );
 };
 

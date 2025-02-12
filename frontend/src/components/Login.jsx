@@ -16,6 +16,7 @@ const Login = () => {
             console.log(response);
             localStorage.setItem("token", response.data.access_token);
             localStorage.setItem("username", response.data.username);
+            localStorage.setItem("is_admin", response.data.is_admin);
             setStatMessage({text: response.data.message, type: "success" });
             setTimeout(() => navigate("/chat"), 2000);
         } catch (error) {

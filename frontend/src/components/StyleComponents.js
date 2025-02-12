@@ -89,7 +89,7 @@ export const ProfileContainer = styled.div`
 export const ProfileCircle = styled.div`
     width: 40px;
     height: 40px;
-    background-color: #374151; /* Slightly lighter gray */
+    background-color: #374151;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -99,9 +99,7 @@ export const ProfileCircle = styled.div`
     font-weight: bold;
 `;
 
-export const DropdownMenu = styled.div.withConfig({
-    shouldForwardProp: (prop) => prop !== "isVisible",
-})`
+export const DropdownMenu = styled.div`
     position: absolute;
     top: 50px;
     right: 0;
@@ -110,7 +108,6 @@ export const DropdownMenu = styled.div.withConfig({
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 10px;
-    display: ${({isVisible}) => (isVisible ? "block" : "none")};
     z-index: 10;
 
     button {
@@ -123,7 +120,7 @@ export const DropdownMenu = styled.div.withConfig({
         cursor: pointer;
 
         &:hover {
-            background-color: #f3f4f6; /* Light gray hover effect */
+            background-color: #f3f4f6;
         }
     }
 `;
@@ -200,6 +197,18 @@ export const SendButton = styled.button`
     }
     `;
 
+export const RagModeSelect = styled.select`
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+`;
 export const Header = styled.h1`
     font-size: 24px;
     color: #333;
@@ -308,6 +317,24 @@ export const SessionSelector = styled.select`
 `;
 
 export const NewSessionButton = styled.button`
+    width: 100%;
+    padding: 10px;
+    background-color: #3b82f6; /* Blue */
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+        background-color: #2563eb; /* Darker blue */
+    }
+`;
+
+export const SideBarGoToBtn = styled.button`
     width: 100%;
     padding: 10px;
     background-color: #3b82f6; /* Blue */
@@ -472,13 +499,13 @@ export const AttachmentButtonWrapper = styled.label`
     }
 `;
 
-export const AdminContainer = styled.div`
+export const DashboardContainer = styled.div`
     display: flex;
     height: 100vh;
 `;
 
 
-export const AdminSidebarItem = styled.div.withConfig({
+export const DashboardSidebarItem = styled.div.withConfig({
     shouldForwardProp: (prop) => prop !== "active",
 })`
     display: flex;

@@ -116,7 +116,7 @@ async def upload_files(files: List[UploadFile], tags: str, files_collection: Asy
             detail=f"File upload failed: {str(e)}"
         )
 
-async def list_all_files(db: Session, current_user: User, files_collection: AsyncIOMotorCollection):
+async def list_all_files(files_collection: AsyncIOMotorCollection):
     try:
         files_list = await files_collection.find().to_list()
         return [{"id": str(file['_id']),
@@ -127,6 +127,8 @@ async def list_all_files(db: Session, current_user: User, files_collection: Asyn
                 "collection_name": file['collection_name'],
                 "tags": file['tags']} for file in files_list]
     except Exception as e:
+        with open('error.txt', 'w') as f:
+            f.write(str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to fetch files info : {str(e)}"

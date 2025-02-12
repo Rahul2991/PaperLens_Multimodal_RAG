@@ -29,9 +29,16 @@ export const fetchChatSessions = () => API.get("/chat/sessions");
 export const createChatSession = () => API.post("/chat/create_session");
 export const deleteSession = async (sessionId) => API.delete(`/chat/sessions/${sessionId}`)
 export const listUsers = () => API.get("/admin/users");
-export const listFiles = () => API.get("/admin/list_files");
+export const listFiles = (is_admin) => {
+    console.log("is_admin", is_admin);
+    if (is_admin) {
+        return API.get("/admin/list_files");
+    } else {
+        return API.get("/user/list_files");
+    }
+}
 
-export const uploadRagFilesAdmin = (files, tags) => {
+export const uploadRagFiles = (files, tags, is_admin) => {
     const formData = new FormData();
 
     // Append all files to FormData
@@ -40,11 +47,22 @@ export const uploadRagFilesAdmin = (files, tags) => {
     });
 
     // Optionally, append tags to FormData if needed
-    formData.append("tags", tags);
+    formData.append("tags", tags || "");
 
-    return API.post("/admin/upload", formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    });
+    console.log(is_admin)
+    console.log("Sending FormData:", formData);
+
+    if (is_admin) {
+        return API.post("/admin/upload", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    } else {
+        return API.post("/user/upload", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+    }
 };

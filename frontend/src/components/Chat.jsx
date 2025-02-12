@@ -3,7 +3,7 @@ import { FaPaperclip } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { createChatSession, deleteSession, fetchChatBotResponse, fetchChatSessions } from "../api";
-import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SidebarList, SidebarItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper } from "./StyleComponents";
+import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SidebarList, SidebarItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper, SideBarGoToBtn, RagModeSelect } from "./StyleComponents";
 
 const Chat = () => {
     const [sessions, setSessions] = useState([]);
@@ -12,6 +12,7 @@ const Chat = () => {
     const [input, setInput] = useState("");
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
+    const [userAdmin, setUserAdmin] = useState(false);
     const [statMessage, setStatMessage] = useState({ text: "", type: "" });
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -20,6 +21,8 @@ const Chat = () => {
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const chatWindowRef = useRef(null);
+    const dropdownRef = useRef(null);
+    const [ragMode, setRagMode] = useState("all");
 
     useEffect(() => {
         if (chatEndRef.current && chatWindowRef.current) {
@@ -31,6 +34,9 @@ const Chat = () => {
         const fetchInitialData = async () => {
             const user = localStorage.getItem("username");
             setUsername(user || "User");
+            const is_admin = localStorage.getItem("is_admin") === "true";
+            setUserAdmin(is_admin);
+            console.log("is_admin", is_admin);
             try {
                 const { data } = await fetchChatSessions();
                 setSessions(data.sessions);
@@ -42,12 +48,19 @@ const Chat = () => {
     }, []);
 
     useEffect(() => {
-        console.log(dropdownVisible);
-    }, [dropdownVisible]);
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownVisible(false);
+            }
+        };
 
-    const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
-    const closeDropdown = () => setDropdownVisible(false);
+    const toggleDropdown = () => setDropdownVisible((prev) => !prev);
 
     const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
@@ -55,6 +68,7 @@ const Chat = () => {
         console.log('logout');
         localStorage.removeItem("token");
         localStorage.removeItem("username");
+        localStorage.removeItem("is_admin");
         navigate("/login");
     };
 
@@ -92,7 +106,9 @@ const Chat = () => {
             const formData = new FormData();
             formData.append("message", input);
             formData.append("session_id", session_id);
+            formData.append("rag_mode", ragMode)
             if (image) formData.append("image", image);
+            
 
             const response = await fetchChatBotResponse(formData);
 
@@ -106,6 +122,7 @@ const Chat = () => {
         catch (error) {
             handleError(error);
         } finally {
+            document.getElementById("file-upload").value = "";
             setLoading(false);
         }
     };
@@ -153,13 +170,15 @@ const Chat = () => {
     };
 
     const postProcessMessages = (selectedSession) => {
+        console.log("postProcessMessages:", selectedSession?.messages)
         const transformedMessages = (selectedSession?.messages || [])
             .filter((msg) => msg.role !== "system") // Remove 'system' messages
             .map((msg) => ({
                 role: msg.role === "assistant" ? "bot" : msg.role, // Map roles
-                text: msg.content, // Map 'content' to 'text'
+                text: msg.content || msg.text, // Map 'content' to 'text'
                 image: msg.image || null,
             }));
+        console.log("transformedMessages:", transformedMessages);
         setMessages(transformedMessages || []);
     }
 
@@ -177,15 +196,22 @@ const Chat = () => {
         }
     };
 
+    const handleDashboard = () => {
+        userAdmin ? navigate('/admin') : navigate('/user');
+    }
+
     return (
         <PageContainer >
             <NavBar>
                 <h3>Multimodal Chat Interface</h3>
-                <ProfileContainer onClick={toggleDropdown} onBlur={closeDropdown} tabIndex={0}>
+                <ProfileContainer ref={dropdownRef} onClick={toggleDropdown} tabIndex={0}>
                     <ProfileCircle>{username.charAt(0).toUpperCase()}</ProfileCircle>
-                    <DropdownMenu isVisible={dropdownVisible}>
-                        <button onClick={handleLogout}>Logout</button>
-                    </DropdownMenu>
+                    {dropdownVisible && (
+                        <DropdownMenu>
+                            <button onClick={handleDashboard}>Dashboard</button>
+                            <button onClick={handleLogout}>Logout</button>
+                        </DropdownMenu>
+                    )}
                 </ProfileContainer>
             </NavBar>
             <MainContainer>
@@ -218,6 +244,7 @@ const Chat = () => {
                             </SidebarItem>)))
                         }
                     </SidebarList>
+                    <SideBarGoToBtn onClick={handleDashboard}>Dashboard</SideBarGoToBtn>
                 </SidebarContainer>
                 <ChatContainer>
                     <ChatWindow ref={chatWindowRef}>
@@ -262,6 +289,11 @@ const Chat = () => {
                             disabled={loading}
                         />
                         <SendButton onClick={handleSend} disabled={loading}> Send </SendButton>
+                        <RagModeSelect value={ragMode} onChange={(e) => setRagMode(e.target.value)} disabled={loading}>
+                            <option value="user">User Data Only</option>
+                            <option value="all">All Data (Admin + User)</option>
+                            <option value="no-rag">Direct Chatbot Response</option>
+                        </RagModeSelect>
                     </InputContainer>
                     {statMessage.text && <StatMessage type={statMessage.type}>{statMessage.text}</StatMessage>}
                 </ChatContainer>

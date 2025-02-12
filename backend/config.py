@@ -11,10 +11,12 @@ class Config:
     ALGORITHM = "HS256"
     ADMIN_UPLOAD_FILE_LOCATION = "uploads/admin"
     USER_UPLOAD_FILE_LOCATION = "uploads/users"
+    TEMP_DIR = "temp"
     
     @staticmethod
     def ensure_directories():
         os.makedirs(Config.ADMIN_UPLOAD_FILE_LOCATION, exist_ok=True)
         os.makedirs(Config.USER_UPLOAD_FILE_LOCATION, exist_ok=True)
+        os.makedirs(Config.TEMP_DIR, exist_ok=True)
         
 Config.ensure_directories()
