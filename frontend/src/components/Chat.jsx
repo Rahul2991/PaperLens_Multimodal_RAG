@@ -136,7 +136,7 @@ const Chat = () => {
         } else {
             console.log("No file selected.");
         }
-        // setImage(event.target.files[0]);
+        setImage(event.target.files[0]);
     };
 
     const handleNewSession = async () => {
@@ -272,7 +272,7 @@ const Chat = () => {
                         <>
                             <FileInput
                                 type="file"
-                                accept=".png,.jpg,.jpeg,.pdf,.txt" // Supported file types
+                                accept=".png,.jpg,.jpeg" // Supported file types
                                 onChange={handleFileUpload}
                                 id="file-upload"
                                 disabled={loading}
@@ -291,7 +291,7 @@ const Chat = () => {
                         <SendButton onClick={handleSend} disabled={loading}> Send </SendButton>
                         <RagModeSelect value={ragMode} onChange={(e) => setRagMode(e.target.value)} disabled={loading}>
                             <option value="user">User Data Only</option>
-                            <option value="all">All Data (Admin + User)</option>
+                            <option value="all">All Data (Admin)</option>
                             <option value="no-rag">Direct Chatbot Response</option>
                         </RagModeSelect>
                     </InputContainer>

@@ -8,7 +8,7 @@ import FilesUploadSection from "./FilesUploadSection";
 import AdminLogsSection from "./AdminLogsSection";
 
 const AdminDashboard = () => {
-    const [activePage, setActivePage] = useState("dashboard");
+    const [activePage, setActivePage] = useState("users");
     const [username, setUsername] = useState("");
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const navigate = useNavigate();
@@ -46,27 +46,27 @@ const AdminDashboard = () => {
 
     const renderContent = () => {
         switch (activePage) {
-            case "dashboard":
-                return <h2>Welcome to the Admin Dashboard</h2>;
+            // case "dashboard":
+            //     return <h2>Welcome to the Admin Dashboard</h2>;
             case "users":
                 return <AdminUsersSection />
             case "files":
                 return <FilesUploadSection is_admin={true} />
-            case "logs":
-                return <AdminLogsSection />;
-            case "settings":
-                return <h2>settings</h2>;
+            // case "logs":
+            //     return <AdminLogsSection />;
+            // case "settings":
+            //     return <h2>settings</h2>;
             default:
                 return <h2>Select an option from the sidebar</h2>;
         }
     };
 
     const menuItems = [
-        { name: "Dashboard", icon: <FaChartBar />, id: "dashboard" },
+        // { name: "Dashboard", icon: <FaChartBar />, id: "dashboard" },
         { name: "Manage Users", icon: <FaUsers />, id: "users" },
         { name: "Manage Files", icon: <FaFileAlt />, id: "files" },
-        { name: "Logs", icon: <LuLogs />, id: "logs" },
-        { name: "Settings", icon: <FaCog />, id: "settings" },
+        // { name: "Logs", icon: <LuLogs />, id: "logs" },
+        // { name: "Settings", icon: <FaCog />, id: "settings" },
     ];
 
     return (

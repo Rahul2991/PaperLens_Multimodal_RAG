@@ -53,9 +53,9 @@ class RAG:
 
         return "\n\n---\n\n".join(combined_prompt)
 
-    def query(self, query):
+    def query(self, query, img=None):
         context = self.generate_context(query=query)
         prompt = self.qa_prompt_tmpl_str.format(context=context, query=query)
-        response = self.llm.generate(prompt)
+        response = self.llm.generate(prompt, image=img)
         
         return response

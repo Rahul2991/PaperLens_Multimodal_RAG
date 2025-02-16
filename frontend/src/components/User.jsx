@@ -5,7 +5,7 @@ import { DashboardContainer, DashboardSidebarItem, DropdownMenu, SideBarGoToBtn,
 import FilesUploadSection from "./FilesUploadSection";
 
 const UserDashboard = () => {
-    const [activePage, setActivePage] = useState("dashboard");
+    const [activePage, setActivePage] = useState("files");
     const [username, setUsername] = useState("");
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const navigate = useNavigate();
@@ -56,9 +56,9 @@ const UserDashboard = () => {
     };
 
     const menuItems = [
-        { name: "Dashboard", icon: <FaChartBar />, id: "dashboard" },
+        // { name: "Dashboard", icon: <FaChartBar />, id: "dashboard" },
         { name: "Manage Files", icon: <FaFileAlt />, id: "files" },
-        { name: "Settings", icon: <FaCog />, id: "settings" },
+        // { name: "Settings", icon: <FaCog />, id: "settings" },
     ];
 
     return (
