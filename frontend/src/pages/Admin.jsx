@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaFileAlt, FaChartBar, FaCog } from "react-icons/fa";
-import { DashboardContainer, DashboardSidebarItem, DropdownMenu, SideBarGoToBtn, NavBar, PageContainer, ProfileCircle, ProfileContainer, SidebarContainer, SidebarIcon, SidebarList } from "./StyleComponents"
-import FilesUploadSection from "./FilesUploadSection";
+import { FaUsers, FaFileAlt, FaChartBar, FaCog } from "react-icons/fa";
+import { DashboardContainer, DashboardSidebarItem, DropdownMenu, NavBar, PageContainer, ProfileCircle, ProfileContainer, SidebarContainer, SidebarIcon, SidebarList, SideBarGoToBtn } from "../components/StyleComponents"
+import { LuLogs } from "react-icons/lu";
+import AdminUsersSection from "../components/AdminUsersSection";
+import FilesUploadSection from "../components/FilesUploadSection";
+import AdminLogsSection from "../components/AdminLogsSection";
 
-const UserDashboard = () => {
-    const [activePage, setActivePage] = useState("files");
+const AdminDashboard = () => {
+    const [activePage, setActivePage] = useState("users");
     const [username, setUsername] = useState("");
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const navigate = useNavigate();
@@ -20,20 +23,19 @@ const UserDashboard = () => {
     }, []);
 
     useEffect(() => {
-            const handleClickOutside = (event) => {
-                if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                    setDropdownVisible(false);
-                }
-            };
-    
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }, []);
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownVisible(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
-
 
     const handleLogout = () => {
         console.log('logout');
@@ -44,12 +46,16 @@ const UserDashboard = () => {
 
     const renderContent = () => {
         switch (activePage) {
-            case "dashboard":
-                return <h2>Welcome to the User Dashboard</h2>;
+            // case "dashboard":
+            //     return <h2>Welcome to the Admin Dashboard</h2>;
+            case "users":
+                return <AdminUsersSection />
             case "files":
-                return <FilesUploadSection is_admin={false} />
-            case "settings":
-                return <h2>settings</h2>;
+                return <FilesUploadSection is_admin={true} />
+            // case "logs":
+            //     return <AdminLogsSection />;
+            // case "settings":
+            //     return <h2>settings</h2>;
             default:
                 return <h2>Select an option from the sidebar</h2>;
         }
@@ -57,14 +63,16 @@ const UserDashboard = () => {
 
     const menuItems = [
         // { name: "Dashboard", icon: <FaChartBar />, id: "dashboard" },
+        { name: "Manage Users", icon: <FaUsers />, id: "users" },
         { name: "Manage Files", icon: <FaFileAlt />, id: "files" },
+        // { name: "Logs", icon: <LuLogs />, id: "logs" },
         // { name: "Settings", icon: <FaCog />, id: "settings" },
     ];
 
     return (
         <PageContainer>
             <NavBar>
-                <h3>User Panel</h3>
+                <h3>Admin Panel</h3>
                 <ProfileContainer ref={dropdownRef} onClick={toggleDropdown} tabIndex={0}>
                     <ProfileCircle>{username.charAt(0).toUpperCase()}</ProfileCircle>
                     {dropdownVisible && (
@@ -92,4 +100,4 @@ const UserDashboard = () => {
     )
 }
 
-export default UserDashboard;
+export default AdminDashboard;

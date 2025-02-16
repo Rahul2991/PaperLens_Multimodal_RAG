@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api";
-import { Header, InputField, Button, Container, GoToLink, StatMessage } from "./StyleComponents";
+import { Header, InputField, Button, Container, GoToLink, StatMessage } from "../components/StyleComponents";
 
 const Login = () => {
     const [username, setUsername] = useState("");

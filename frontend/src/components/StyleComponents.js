@@ -16,6 +16,123 @@ const typingDots = keyframes`
     100% { content: "..."; }
 `;
 
+/* Register Page Styled Components */
+
+export const Container = styled.div`
+    max-width: 90%;
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    `;
+
+export const Header = styled.h1`
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+    `;
+
+export const InputField = styled.input`
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-sizing: border-box;
+    `;
+
+export const Button = styled.button`
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    margin: 10px 0;
+    
+    &:hover {
+        background-color: #0056b3;
+    }
+    `;
+
+export const GoToLink = styled.span`
+    margin-left: 5px;
+    color: #007BFF;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover {
+        color: #0056b3;
+    }
+`;
+/* ------------------------------- */
+
+/* Notification Model Styled Components */
+
+export const ModalOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+
+export const ModalContainer = styled.div`
+    background: white;
+    width: 300px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    border-top: 5px solid ${({ type }) => (type === "success" ? "#28a745" : "#dc3545")};
+`;
+
+export const ModalHeader = styled.h2`
+    font-size: 18px;
+    color: ${({ type }) => (type === "success" ? "#28a745" : "#dc3545")};
+    margin: 0;
+    padding-bottom: 10px;
+`;
+
+export const Separator = styled.hr`
+    border: none;
+    height: 1px;
+    background: #ccc;
+    margin: 10px 0;
+`;
+
+export const ModalMessage = styled.p`
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+`;
+
+export const ModalButton = styled.button`
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    width: 100%;
+
+    &:hover {
+        background: #0056b3;
+    }
+`;
+/* ------------------------------- */
+
 export const PageContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -169,16 +286,6 @@ export const MessageInput = styled.input`
     fontSize: 16px;
     `;
 
-export const InputField = styled.input`
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    box-sizing: border-box;
-    `;
-
 export const FileInput = styled.input`
     display: none;
     `;
@@ -209,51 +316,6 @@ export const RagModeSelect = styled.select`
         cursor: not-allowed;
     }
 `;
-export const Header = styled.h1`
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-    `;
-
-export const Button = styled.button`
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    margin: 10px 0;
-    
-    &:hover {
-        background-color: #0056b3;
-    }
-    `;
-
-export const Container = styled.div`
-    max-width: 90%;
-    width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    font-family: 'Roboto', sans-serif;
-    box-sizing: border-box;
-    `;
-
-export const GoToLink = styled.p`
-    margin-top: 10px;
-    display: inline;
-    color: #007BFF;
-    text-decoration: none;
-    font-size: 14px;
-    cursor: pointer;
-
-    &:hover {
-        color: #0056b3;
-    }`;
 
 export const Greet = styled.span`
     font-size: 18px;

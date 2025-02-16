@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Admin from "./components/Admin";
-import User from "./components/User";
-import Chat from "./components/Chat";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Admin from "./pages/Admin";
+import User from "./pages/User";
+import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {

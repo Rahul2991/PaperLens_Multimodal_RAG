@@ -3,7 +3,7 @@ import { FaPaperclip } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { createChatSession, deleteSession, fetchChatBotResponse, fetchChatSessions } from "../api";
-import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SidebarList, SidebarItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper, SideBarGoToBtn, RagModeSelect } from "./StyleComponents";
+import { ChatContainer, ChatWindow, FileInput, MessageInput, InputContainer, Message, NavBar, SendButton, StatMessage, Image, TypingIndicator, TypingLoaderContainer, NewSessionButton, EmptyChat, SpinLoader, DeleteSessionBtn, SidebarContainer, SidebarList, SidebarItem, SessionName, MainContainer, ProfileContainer, ProfileCircle, DropdownMenu, PageContainer, SidebarToggleButton, SpinLoaderContainer, AttachmentButtonWrapper, SideBarGoToBtn, RagModeSelect } from "../components/StyleComponents";
 
 const Chat = () => {
     const [sessions, setSessions] = useState([]);

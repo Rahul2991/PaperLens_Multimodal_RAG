@@ -21,7 +21,7 @@ API.interceptors.response.use(
     }
 );
 
-export const registerUser = (userData) => API.post("/auth/register", userData);
+export const registerUser = (formData) => API.post("/auth/register", formData);
 export const loginUser = (userData) => API.post("/auth/login", userData);
 export const fetchChat = () => API.get("/chat");
 export const fetchChatBotResponse = (formData) => API.post("/chat/chat_ai", formData);
