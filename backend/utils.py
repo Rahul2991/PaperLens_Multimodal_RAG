@@ -1,4 +1,8 @@
 import time, os, hashlib, magic
+import logging
+
+# Configure logger
+logger = logging.getLogger("Multimodal_rag_bot")
 
 def get_unique_filename(filename: str) -> str:
     """Generate a unique filename"""

@@ -1,1 +1,1 @@
-user_sessions_cache = {}
+user_sessions_cache = {}  # Cache of sessions for faster access of session data
