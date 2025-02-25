@@ -181,7 +181,7 @@ export const SpinLoader = styled.div`
     `;
 
 export const Message = styled.div`
-    text-align: ${({ role }) => (role === "user" ? "right" : "left")};
+    text-align: left;
     margin: 5px 0;
     background-color: ${({ role }) => (role === "user" ? "#d1e7ff" : "#f1f1f1")};
     padding: 10px;
@@ -267,7 +267,7 @@ export const AttachmentButtonWrapper = styled.label`
     }
 `;
 
-export const MessageInput = styled.input`
+export const MessageInput = styled.textarea`
     flex: 1;
     padding: 10px;
     border: 1px solid #ddd;

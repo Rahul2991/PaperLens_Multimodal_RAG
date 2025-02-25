@@ -1,6 +1,9 @@
 from qdrant_client import models, QdrantClient
+from utils import is_valid_url
 from tqdm import tqdm
 import logging
+from grpc import RpcError
+
 
 # Configure logger
 logger = logging.getLogger("Multimodal_rag_bot")
@@ -9,7 +12,7 @@ class QdrantVDB:
     """
     A class to manage interactions with Qdrant vector database.
     """
-    def __init__(self, vector_dim=768, batch_size=512, url=None):
+    def __init__(self, vector_dim=768, batch_size=512, url="http://localhost:6333"):
         """
         Initializes Qdrant vector database client.
 
@@ -20,8 +23,16 @@ class QdrantVDB:
         """
         self.batch_size = batch_size
         self.vector_dim = vector_dim
-        self.client = QdrantClient(url=url if url else "http://localhost:6333", prefer_grpc=True)
-        logger.info("QdrantVDB initialized with vector_dim=%d, batch_size=%d, url=%s", vector_dim, batch_size, url)
+        try:
+            if not is_valid_url(url):
+                logger.error(f"Invalid URL provided: {url}")
+                raise ValueError(f"Invalid URL provided: {url}")
+
+            self.client = QdrantClient(url=url, prefer_grpc=True)
+            logger.info("QdrantVDB initialized with vector_dim=%d, batch_size=%d, url=%s", vector_dim, batch_size, url)
+        except Exception as e:
+            logger.error(f"Failed to initialized QdrantVDB: {e}", exc_info=True)
+            raise
     
     def create_or_set_collection(self, collection_name):
         """
@@ -30,16 +41,23 @@ class QdrantVDB:
         Args:
             collection_name: Name of the collection.
         """
-        self.collection_name = collection_name
-        if not self.client.collection_exists(collection_name=self.collection_name):
-            logger.info("Creating collection: %s", collection_name)
-            self.client.create_collection(collection_name=self.collection_name,
-                                        vectors_config=models.VectorParams(size=self.vector_dim, distance=models.Distance.DOT, on_disk=True),
-                                        optimizers_config=models.OptimizersConfigDiff(default_segment_number=5, indexing_threshold=0)
-                                        )
-            logger.info("Collection %s created successfully", collection_name)
-        else:
-            logger.info("Collection %s already exists", collection_name)
+        try:
+            self.collection_name = collection_name
+            if not self.client.collection_exists(collection_name=self.collection_name):
+                logger.info("Creating collection: %s", collection_name)
+                self.client.create_collection(collection_name=self.collection_name,
+                                            vectors_config=models.VectorParams(size=self.vector_dim, distance=models.Distance.DOT, on_disk=True),
+                                            optimizers_config=models.OptimizersConfigDiff(default_segment_number=5, indexing_threshold=0)
+                                            )
+                logger.info("Collection %s created successfully", collection_name)
+            else:
+                logger.info("Collection %s already exists", collection_name)
+        except RpcError as re:
+            logger.error(f"Failed to connect to Qdrant server: %s", re.details() if hasattr(re, "details") else str(re))
+            raise
+        except Exception as e:
+            logger.error(f"Error creating or setting collection: %s", str(e), exc_info=True)
+            raise
             
     def batch_iterate(self, lst, batch_size):
         """
@@ -79,4 +97,5 @@ class QdrantVDB:
                                         )
             logger.info("Collection %s updated successfully with new optimizer settings", self.collection_name)
         except Exception as e:
-            logger.error("Error during data ingestion: %s", str(e))
+            logger.error("Error during data ingestion: %s", str(e), exc_info=True)
+            raise

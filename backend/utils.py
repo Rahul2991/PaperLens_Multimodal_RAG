@@ -1,4 +1,5 @@
 import time, os, hashlib, magic
+from urllib.parse import urlparse
 import logging
 
 # Configure logger
@@ -32,3 +33,11 @@ async def is_pdf(file_bytes: bytes) -> bool:
     mime = magic.Magic(mime=True)
     file_type = mime.from_buffer(file_bytes)
     return file_type == "application/pdf"
+
+def is_valid_url(url):
+    """Check if the url is a valid url."""
+    try:
+        parsed = urlparse(url)
+        return all([parsed.scheme, parsed.netloc])  # Ensures scheme (http, https) and netloc exist
+    except ValueError:
+        return False

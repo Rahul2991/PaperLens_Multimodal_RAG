@@ -25,7 +25,11 @@ class EmbedData:
             batch_size (int): Number of contexts to process in a single batch.
         """
         self.embed_model_name = embed_model_name
-        self.embed_model = self._load_embed_model()
+        try:
+            self.embed_model = self._load_embed_model()
+        except Exception as e:
+            logger.error(f"Error loading embedding model: {str(e)}")
+            raise
         self.batch_size = batch_size
         self.embeddings = []
         
@@ -75,11 +79,15 @@ class EmbedData:
         Args:
             contexts (list of str): A list of text inputs to be embedded.
         """
-        self.contexts = contexts
-        logger.info(f"Starting embedding process for {len(contexts)} texts.")
-        
-        for batch_context in tqdm(self.batch_iterate(contexts, self.batch_size), total=len(contexts)//self.batch_size, desc="Embedding data in batches"):
-            batch_embeddings = self.generate_embedding(batch_context)
-            self.embeddings.extend(batch_embeddings)
-        
-        logger.info("Embedding process completed.")
+        try:
+            self.contexts = contexts
+            logger.info(f"Starting embedding process for {len(contexts)} texts.")
+            
+            for batch_context in tqdm(self.batch_iterate(contexts, self.batch_size), total=len(contexts)//self.batch_size, desc="Embedding data in batches"):
+                batch_embeddings = self.generate_embedding(batch_context)
+                self.embeddings.extend(batch_embeddings)
+            
+            logger.info("Embedding process completed.")
+        except Exception as e:
+            logger.error("Error during embedding: %s", str(e))
+            raise
