@@ -53,7 +53,7 @@ def data_extracter(data, file_type, bot: Conversational_Bot = None):
             logger.info(f"Extracted: {len(image_summary)} texts")
             return image_summary
     except Exception as e:
-        logger.error(f"Error extracting data: {e}")
+        logger.error(f"Error extracting data: {e}", exc_info=True)
         return None
     
 def extract_pdf_data(file_path=None, file=None, bot: Conversational_Bot = None):

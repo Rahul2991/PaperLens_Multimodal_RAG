@@ -1,7 +1,10 @@
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from config import logger
 from sqlalchemy.orm import Session
 from auth.security import hash_password
 from models.user import User
+from models.sql_db import SessionLocal
 
 def create_super_admin(username: str, password: str, db: Session):
     """
@@ -30,12 +33,15 @@ def create_super_admin(username: str, password: str, db: Session):
         
         logger.info("Super admin created successfully")
     except Exception as e:
-        logger.error(f"Error creating super admin: {e}")
+        if "UNIQUE constraint failed" in str(e):
+            logger.error(f"Duplicate user error creating super admin: {username}")
+        else:
+            logger.error(f"Error creating super admin: {e}")
     finally:
         db.close()
         logger.info("Database session closed")
         
 if __name__ == '__main__':
     # To create a super admin, uncomment and provide username/password
-    # create_super_admin('admin_username', 'admin_password', SessionLocal())
+    # create_super_admin('admin_username', 'pass', SessionLocal())
     ...
