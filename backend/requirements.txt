@@ -25,3 +25,4 @@ einops==0.8.0
 llama-index-embeddings-huggingface
 qdrant_client
 pytest
+pytest-mock
