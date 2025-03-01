@@ -20,7 +20,8 @@ poppler-utils==0.1.0
 pdf2image==1.17.0
 unstructured_pytesseract==0.3.12
 onnx==1.16.1
-python-magic-bin==0.4.14
+python-magic; sys_platform == "linux" or sys_platform == "darwin"
+python-magic-bin==0.4.14; sys_platform == "win32"
 einops==0.8.0
 llama-index-embeddings-huggingface
 qdrant_client
