@@ -1,5 +1,11 @@
 # Paperlens Multimodal RAG Bot
 
+![WIP](https://img.shields.io/badge/WIP-Work%20In%20Progress-blue)
+![Build](https://github.com/Rahul2991/PaperLens_Multimodal_RAG/actions/workflows/ci.yml/badge.svg)
+![Python](https://img.shields.io/badge/python-3.11.10-blue.svg)
+![License](https://img.shields.io/github/license/Rahul2991/PaperLens_Multimodal_RAG)
+
+
 PaperLens Multimodal RAG Bot is an AI-powered chatbot supporting text and image-based interactions using FastAPI, React, Ollama, Qdrant, and Llama 3.2 Vision. It offers:
 
 - ✅ No-RAG Chat (Regular Chat Mode)
