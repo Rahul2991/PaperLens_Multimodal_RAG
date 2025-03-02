@@ -10,17 +10,38 @@ import logging
 logger = logging.getLogger("Multimodal_rag_bot")
 
 def create_user(user: UserRegister, db: Session) -> User:
-    existing_user = db.query(User).filter(User.username == user.username).first()
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already exists",
-        )
-    hashed_pw = hash_password(user.password)
-    new_user = User(username=user.username, hashed_password=hashed_pw)
-    db.add(new_user)
-    db.commit()
-    return new_user
+    """
+    Checks if a user with the same username already exists in the database,
+    hashes the password, and adds a new user to the database if the username is unique.
+    
+    Args:
+        user (UserRegister): Contains user information such as username and password
+        db (Session): The database session.
+    Returns:
+        The function `create_user` returns a newly created user object of type `User`.
+    """
+    try:
+        existing_user = db.query(User).filter(User.username == user.username).first()
+        if existing_user: raise
+        hashed_pw = hash_password(user.password)
+        new_user = User(username=user.username, hashed_password=hashed_pw)
+        db.add(new_user)
+        db.commit()
+        logger.info("User created successfully")
+        return new_user
+    except Exception as e:
+        if existing_user:
+            logger.error(f"Username already exists: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already exists",
+            )
+        else:
+            logger.error(f"Error creating user: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Failed to create user"
+            )
 
 def authenticate_user(user: UserLogin, db: Session):
     """

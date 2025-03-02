@@ -72,6 +72,7 @@ const ChatInput = ({ loading, setLoading, setMessages, activeSessionId, setActiv
                     accept=".png,.jpg,.jpeg" // Supported file types
                     onChange={handleFileUpload}
                     id="file-upload"
+                    data-testid="file-upload" 
                     disabled={loading}
                 />
                 <AttachmentButtonWrapper htmlFor="file-upload" disabled={loading}>
