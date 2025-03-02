@@ -27,14 +27,22 @@ jobs:
         run: |
           # $CONDA is an environment variable pointing to the root of the miniconda directory
           echo $CONDA/bin >> $GITHUB_PATH
+      
+      - name: Install SQLite Development Libraries
+        run: sudo apt-get install -y libsqlite3-dev
 
       - name: Install dependencies
         run: |
           cd backend
+          conda install -c anaconda sqlite -y
           conda install pytorch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1  pytorch-cuda=11.8 -c pytorch -c nvidia
           pip install -r requirements.txt
           conda install -c conda-forge tesseract==5.5.0
           conda install -c conda-forge poppler==24.12.0
+
+      - name: Debug Installed Packages
+        run: |
+          python -c "import torch; import torchvision; print(torch.__version__, torchvision.__version__)"
       
       - name: Lint with flake8
         run: |
