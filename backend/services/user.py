@@ -109,9 +109,9 @@ async def upload_files(files: List[UploadFile], tags: str, files_collection: Asy
                 logger.info(f"File {file.filename} uploaded and processed successfully.")
             except Exception as e:
                 # Cleanup if any error occurs during processing
+                logger.error(f"Error processing file {file.filename}: {str(e)}", exc_info=True)
                 if os.path.exists(file_path):
                     os.remove(file_path)
-                logger.error(f"Error processing file {file.filename}: {str(e)}")
                 raise
         return {"message": f"File uploaded successfully"}
     except Exception as e:
@@ -134,12 +134,12 @@ async def list_all_files(current_user: User, files_collection: AsyncIOMotorColle
     """
     try:
         # Retrieve files from database and filter by current user
-        files_list = await files_collection.find().to_list()
+        files_list = await files_collection.find({"uploader": current_user.username}).to_list()
         return [{"id": str(file['_id']),
                 "filename": file['filename'],
                 "upload_time": file['upload_time'].strftime("%Y-%m-%d %H:%M:%S"),
                 "tags": file['tags']} 
-                for file in files_list if current_user.username == file['uploader']
+                for file in files_list
                 ]
     except Exception as e:
         logger.error(f"Failed to fetch files meta data for user {current_user.username}: {str(e)}")

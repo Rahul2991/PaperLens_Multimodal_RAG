@@ -24,6 +24,7 @@ def mock_pdf_data():
 @pytest.fixture
 def mock_text_data():
     return [elements.CompositeElement(text="Sample text document")]
+
 @patch("os.path.exists")
 @patch("rag_modules.document_extract.partition_pdf")
 def test_extract_pdf_data(mock_partition_pdf, mock_path_exist, mock_pdf_data, mock_bot):

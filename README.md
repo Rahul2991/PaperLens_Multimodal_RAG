@@ -53,7 +53,7 @@ cd PaperLens_Multimodal_RAG
 ### 2️⃣ Install Dependencies
 #### Prerequisites
 Ensure you have:
-- Python 3.11.10 installed in a conda environment (Windows 11)
+- Python 3.11.10 installed in a conda environment
 - Docker Installed [Get it here](https://docs.docker.com/engine/install/)
 
 #### Backend (FastAPI)

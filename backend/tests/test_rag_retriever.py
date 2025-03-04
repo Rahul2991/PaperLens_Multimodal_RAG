@@ -1,7 +1,6 @@
 import pytest, sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from unittest.mock import MagicMock, patch
-from qdrant_client import models
+from unittest.mock import MagicMock
 from rag_modules.vector_db import QdrantVDB
 from rag_modules.embed_data import EmbedData
 from rag_modules.rag_retriever import Retriever

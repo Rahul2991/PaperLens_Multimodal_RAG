@@ -4,8 +4,7 @@ from unittest.mock import MagicMock, patch
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from schemas.user import UserRegister, UserLogin
-from auth.security import hash_password, verify_password, create_access_token
-from datetime import timedelta
+from auth.security import hash_password
 from models.user import User
 from services.auth import create_user, authenticate_user, create_access_token_for_user
 
