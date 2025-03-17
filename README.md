@@ -72,6 +72,10 @@ After installation, pull the required model:
 ```bash
 ollama pull llama3.2-vision
 ```
+
+#### Install MongoDB
+Follow the [official MongoDB installation guide](https://www.mongodb.com/try/download/community).
+
 #### Frontend (React.js)
 ```bash
 cd frontend
